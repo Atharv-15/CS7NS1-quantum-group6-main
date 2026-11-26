@@ -49,53 +49,32 @@ def run_sensitivity(params, seeds) -> dict:
       - append {"t2_ms": ..., "rate_mean": ..., "rate_ci95": ..., "n_seeds": ...}
     Write the results dict to experiment_results.json and return it.
     """
-    # raise NotImplementedError("TODO: implement run_sensitivity")
 
-    """Run an OAT sensitivity sweep over memory coherence time T2."""
-
-    # Experiment configuration
     t2_grid = params["experiment"]["t2_grid_ms"]
     seeds_per_point = params["experiment"]["seeds_per_point"]
 
-    # Use only the required number of seeds
     selected_seeds = seeds[:seeds_per_point]
 
     points = []
 
     for t2 in t2_grid:
-        # Deep-copy the parameters so the original params
-        # are not modified between experiment points.
         params_copy = json.loads(json.dumps(params))
 
-        # Change only T2 for this sensitivity point
         params_copy["physics"]["t2_ms"] = t2
 
         rates = []
 
-        # Run the same variant scenario for each seed
         for seed in selected_seeds:
             policy = make_policy(params_copy)
 
-            result = run_variant_scenario(
-                params_copy,
-                params_copy["grading"]["sim_time_ms"],
-                seed,
-                policy,
-            )
+            result = run_variant_scenario(params_copy, params_copy["grading"]["sim_time_ms"], seed, policy,)
 
             rates.append(float(result["rate"]))
 
-        # Calculate mean and 95% Student's t CI
         rate_mean, rate_ci95 = mean_ci95(rates)
 
-        points.append({
-            "t2_ms": float(t2),
-            "rate_mean": rate_mean,
-            "rate_ci95": rate_ci95,
-            "n_seeds": len(rates),
-        })
+        points.append({"t2_ms": float(t2), "rate_mean": rate_mean, "rate_ci95": rate_ci95, "n_seeds": len(rates),})
 
-    # Required output structure
     results = {
         "parameter": "t2_ms",
         "grid": [float(t2) for t2 in t2_grid],
@@ -103,7 +82,6 @@ def run_sensitivity(params, seeds) -> dict:
         "points": points,
     }
 
-    # Write required JSON output
     with open("experiment_results.json", "w") as f:
         json.dump(results, f, indent=2)
 

@@ -87,22 +87,12 @@ def run_one_hop(params, sim_time_ms, seed) -> dict:
     
     delivered_pairs = []
     for p in sim.state.pairs.get(0,[]):
-        record = DeliveredPair(request_id=-1,
-                               delivered_at=p.born,
-                               fidelity=p.f0,
-                               consumed=1
-                               )
+        record = DeliveredPair(request_id=-1, delivered_at=p.born, fidelity=p.f0, consumed=1)
         delivered_pairs.append(record)
 
     summary = summarise(delivered_pairs,sim_time_ms)
 
-    return {
-        "rate": summary["rate"],
-        "mean_fidelity": summary["mean_fidelity"]
-    }
-    
-
-
+    return {"rate": summary["rate"], "mean_fidelity": summary["mean_fidelity"]}
 
 
 def run_two_hop(params, sim_time_ms, seed) -> dict:
@@ -127,13 +117,7 @@ def run_two_hop(params, sim_time_ms, seed) -> dict:
     delivered_pairs = sim.run(sim_time_ms,policy=ImmediateSwapPolicy())
     
     summary = summarise(delivered_pairs,sim_time_ms)
-    return {
-        "rate": summary["rate"],
-        "mean_fidelity": summary["mean_fidelity"]
-    }
-
-
-    # raise NotImplementedError("TODO: implement run_two_hop")
+    return {"rate": summary["rate"], "mean_fidelity": summary["mean_fidelity"]}
 
 
 def run_variant_scenario(params, sim_time_ms, seed, policy) -> dict:
@@ -156,14 +140,7 @@ def run_variant_scenario(params, sim_time_ms, seed, policy) -> dict:
     phys = params["physics"]
     links = make_links(params, which="variant")
 
-    sim = Simulator(
-        links=links,
-        t2=phys["t2_ms"],
-        q_swap=phys["q_swap"],
-        f_swap=phys["f_swap"],
-        purification_allowed=phys["purification_allowed"],
-        seed=seed,
-    )
+    sim = Simulator(links=links, t2=phys["t2_ms"], q_swap=phys["q_swap"], f_swap=phys["f_swap"], purification_allowed=phys["purification_allowed"], seed=seed,)
     deliveries = sim.run(sim_time_ms, policy=policy)
     s = summarise(deliveries, sim_time_ms)
 
@@ -187,8 +164,3 @@ def run_variant_scenario(params, sim_time_ms, seed, policy) -> dict:
         "p95_latency_ms": p95_latency_ms,
         "pairs_consumed_per_delivery": pairs_consumed_per_delivery,
     }
-
-
-
-
-    # raise NotImplementedError("TODO: implement run_variant_scenario")

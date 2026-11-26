@@ -34,7 +34,6 @@ class BaselinePolicy:
 
 
 class LifoSwapPolicy:
-
     def __init__(self, params):
         self.params = params
         self.chains = params["policy"]["swap_chains"]
